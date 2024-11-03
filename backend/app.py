@@ -1,6 +1,5 @@
-# app.py
 import matplotlib
-matplotlib.use("Agg")  # Configura o backend para renderizar sem GUI
+matplotlib.use("Agg")
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -10,9 +9,8 @@ import base64
 from io import BytesIO
 
 app = Flask(__name__)
-CORS(app)  # Permitir requisições do React
+CORS(app) 
 
-# Inicializar o grafo global
 grafo = nx.Graph()
 is_directed = False
 is_weighted = False
@@ -52,23 +50,18 @@ def get_graph_image():
     pos = nx.spring_layout(grafo)
     labels = nx.get_edge_attributes(grafo, 'weight') if is_weighted else None
     
-    # Desenhe o grafo e as arestas com conexão curvada para arestas bidirecionais
     nx.draw(
         grafo, pos, with_labels=True, node_color='skyblue', node_size=500, 
         font_size=10, font_weight='bold', edge_color='gray', 
         connectionstyle="arc3,rad=0.1" 
     )
 
-    # Desenhar rótulos de arestas com ajuste para arestas bidirecionais
     if labels:
-        # Itera sobre cada aresta e desenha o rótulo do peso
         for (u, v), weight in labels.items():
             if grafo.has_edge(v, u) and (v, u) in labels:
-                # Se a aresta inversa existe, posicione o rótulo em uma posição deslocada
                 nx.draw_networkx_edge_labels(grafo, pos, edge_labels={(u, v): weight}, label_pos=0.3)
                 nx.draw_networkx_edge_labels(grafo, pos, edge_labels={(v, u): labels[(v, u)]}, label_pos=0.7)
             else:
-                # Caso contrário, posicione o rótulo no meio
                 nx.draw_networkx_edge_labels(grafo, pos, edge_labels={(u, v): weight})
 
     buf = BytesIO()

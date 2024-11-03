@@ -1,4 +1,3 @@
-// src/components/GraphControls.js
 import React, { useState } from "react";
 import { 
     createGraph, 
@@ -27,11 +26,9 @@ function GraphControls({ setGraphImage }) {
     const [adjacency, setAdjacency] = useState(null);
     const [shortestPath, setShortestPath] = useState(null);
 
-    // Novos estados para manipular o upload de arquivo e a string JSON
     const [jsonString, setJsonString] = useState("");
     const [file, setFile] = useState(null);
 
-    // Campos de entrada separados para as operações
     const [adjacentVertex, setAdjacentVertex] = useState("");
     const [degreeVertex, setDegreeVertex] = useState("");
     const [adjacencyOrigin, setAdjacencyOrigin] = useState("");
@@ -102,7 +99,6 @@ function GraphControls({ setGraphImage }) {
         setShortestPath(response.data);
     };
 
-    // Funções para carregar grafo de arquivo e de string JSON
     const handleLoadGraphFromFile = async () => {
         if (!file) {
             alert("Por favor, selecione um arquivo JSON.");
