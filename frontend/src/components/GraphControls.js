@@ -1,16 +1,17 @@
 import React, { useState } from "react";
-import { 
-    createGraph, 
-    addVertex, 
-    addEdge, 
-    getGraphImage, 
-    getGraphOrderSize, 
-    getAdjacentVertices, 
-    getVertexDegree, 
-    areVerticesAdjacent, 
+import {
+    createGraph,
+    addVertex,
+    addEdge,
+    getGraphImage,
+    getGraphOrderSize,
+    getAdjacentVertices,
+    getVertexDegree,
+    areVerticesAdjacent,
     getShortestPath,
     loadGraphFromFile,
-    loadGraphFromString 
+    loadGraphFromString,
+    getIsEurelian
 } from "../Api";
 
 function GraphControls({ setGraphImage }) {
@@ -21,6 +22,7 @@ function GraphControls({ setGraphImage }) {
     const [destino, setDestino] = useState("");
     const [peso, setPeso] = useState("");
     const [orderSize, setOrderSize] = useState(null);
+    const [eurelian, setEurelian] = useState(null);
     const [adjacentVertices, setAdjacentVertices] = useState(null);
     const [vertexDegree, setVertexDegree] = useState(null);
     const [adjacency, setAdjacency] = useState(null);
@@ -63,6 +65,11 @@ function GraphControls({ setGraphImage }) {
         setOrderSize(response.data);
     };
 
+    const fetchIsEurelian = async () => {
+        const response = await getIsEurelian();
+        setEurelian(response.data);
+    }
+
     const fetchAdjacentVertices = async () => {
         if (!adjacentVertex) {
             alert("Por favor, insira o nome de um vértice.");
@@ -77,7 +84,6 @@ function GraphControls({ setGraphImage }) {
             alert("Por favor, insira o nome de um vértice.");
             return;
         }
-        console.log(typeof(degreeVertex));
         const response = await getVertexDegree(degreeVertex);
         setVertexDegree(response.data);
     };
@@ -99,7 +105,7 @@ function GraphControls({ setGraphImage }) {
         try {
             const response = await getShortestPath(origem, destino);
             setShortestPath(response.data);
-        } catch(Error){
+        } catch (Error) {
             alert(Error.response.data.message);
         }
     };
@@ -109,7 +115,7 @@ function GraphControls({ setGraphImage }) {
             alert("Por favor, selecione um arquivo CSV.");
             return;
         }
-    
+
         try {
             const response = await loadGraphFromFile(file);
             alert(response.data.message);
@@ -119,7 +125,7 @@ function GraphControls({ setGraphImage }) {
             alert(error.response?.data?.error || "Erro ao carregar o grafo.");
         }
     };
-    
+
 
     const handleLoadGraphFromString = async () => {
         try {
@@ -144,7 +150,7 @@ function GraphControls({ setGraphImage }) {
                 Valorados
             </label>
             <button onClick={handleCreateGraph}>Criar Grafo</button>
-            
+
             <h3>Adicionar Vértice</h3>
             <input value={vertice} onChange={(e) => setVertice(e.target.value)} placeholder="Vértice" />
             <button onClick={handleAddVertex}>Adicionar Vértice</button>
@@ -160,11 +166,17 @@ function GraphControls({ setGraphImage }) {
             {orderSize && <p>Ordem: {orderSize.ordem}, Tamanho: {orderSize.tamanho}</p>}
 
             <div>
+                <h4>Verificar Eureliano</h4>
+                <button onClick={fetchIsEurelian}>Verificar Eureliano</button>
+                {eurelian && <p>{eurelian.message}</p>}
+            </div>
+
+            <div>
                 <h4>Exibir Vértices Adjacentes</h4>
-                <input 
-                    value={adjacentVertex} 
-                    onChange={(e) => setAdjacentVertex(e.target.value)} 
-                    placeholder="Vértice para adjacentes" 
+                <input
+                    value={adjacentVertex}
+                    onChange={(e) => setAdjacentVertex(e.target.value)}
+                    placeholder="Vértice para adjacentes"
                 />
                 <button onClick={fetchAdjacentVertices}>Exibir Vértices Adjacentes</button>
                 {adjacentVertices && (
@@ -176,10 +188,10 @@ function GraphControls({ setGraphImage }) {
 
             <div>
                 <h4>Exibir Grau do Vértice</h4>
-                <input 
-                    value={degreeVertex} 
-                    onChange={(e) => setDegreeVertex(e.target.value)} 
-                    placeholder="Vértice para grau" 
+                <input
+                    value={degreeVertex}
+                    onChange={(e) => setDegreeVertex(e.target.value)}
+                    placeholder="Vértice para grau"
                 />
                 <button onClick={fetchVertexDegree}>Exibir Grau do Vértice</button>
                 {vertexDegree && (
@@ -191,15 +203,15 @@ function GraphControls({ setGraphImage }) {
 
             <div>
                 <h4>Verificar Adjacência</h4>
-                <input 
-                    value={adjacencyOrigin} 
-                    onChange={(e) => setAdjacencyOrigin(e.target.value)} 
-                    placeholder="Origem" 
+                <input
+                    value={adjacencyOrigin}
+                    onChange={(e) => setAdjacencyOrigin(e.target.value)}
+                    placeholder="Origem"
                 />
-                <input 
-                    value={adjacencyDest} 
-                    onChange={(e) => setAdjacencyDest(e.target.value)} 
-                    placeholder="Destino" 
+                <input
+                    value={adjacencyDest}
+                    onChange={(e) => setAdjacencyDest(e.target.value)}
+                    placeholder="Destino"
                 />
                 <button onClick={checkAdjacency}>Verificar Adjacência</button>
                 {adjacency !== null && (
@@ -211,15 +223,15 @@ function GraphControls({ setGraphImage }) {
 
             <div>
                 <h4>Calcular Caminho Mais Curto</h4>
-                <input 
-                    value={origem} 
-                    onChange={(e) => setOrigem(e.target.value)} 
-                    placeholder="Origem" 
+                <input
+                    value={origem}
+                    onChange={(e) => setOrigem(e.target.value)}
+                    placeholder="Origem"
                 />
-                <input 
-                    value={destino} 
-                    onChange={(e) => setDestino(e.target.value)} 
-                    placeholder="Destino" 
+                <input
+                    value={destino}
+                    onChange={(e) => setDestino(e.target.value)}
+                    placeholder="Destino"
                 />
                 <button onClick={findShortestPath}>Calcular Caminho Mais Curto</button>
                 {shortestPath && (

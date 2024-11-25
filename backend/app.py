@@ -44,7 +44,6 @@ def add_edge():
     
     return jsonify({"message": f"Aresta de {origem} para {destino} com peso {peso} adicionada com sucesso!"})
 
-
 @app.route("/get_graph_image", methods=["GET"])
 def get_graph_image():
     plt.figure(figsize=(16, 12))
@@ -96,13 +95,14 @@ def load_graph_from_file():
         if destino not in grafo:
             grafo.add_node(destino)
         
-        grafo.add_edge(origem, destino, weight=peso)
-
-    print(get_graph())
+        if is_weighted:
+            grafo.add_edge(origem, destino, weight=peso)
+            print(f"Aresta de {origem} para {destino} com peso {peso} adicionada com sucesso!")
+        else:
+            grafo.add_edge(origem, destino)
+            print(f"Aresta de {origem} para {destino} adicionada com sucesso!")
 
     return jsonify({"message": "Grafo carregado do arquivo CSV com sucesso!"})
-
-
 
 @app.route("/load_graph_from_string", methods=["POST"])
 def load_graph_from_string():
@@ -167,13 +167,13 @@ def shortest_path():
         return jsonify({"custo": custo, "caminho": caminho})
     except nx.NetworkXNoPath:
         return jsonify({"message": f"Não existe caminho entre {origem} e {destino}."}), 404
-    
-@app.route("/get_graph", methods=["GET"])
-def get_graph():
-    nodes = list(grafo.nodes)
-    edges = list(grafo.edges(data=True))
-    return jsonify({"nodes": nodes, "edges": edges})
 
+@app.route("/is_eulerian", methods=["GET"])
+def is_eulerian():
+    if nx.is_eulerian(grafo):
+        return jsonify({"euleriano": True, "message": "O grafo é Euleriano!"})
+    else:
+        return jsonify({"euleriano": False, "message": "O grafo não é Euleriano."})
 
 if __name__ == "__main__":
     app.run(debug=True)
