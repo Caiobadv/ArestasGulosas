@@ -18,9 +18,16 @@ export const getGraphImage = () => {
     return axios.get(`${API_URL}/get_graph_image`);
 };
 
-export const loadGraphFromFile = (data) => {
-    return axios.post(`${API_URL}/load_graph_from_file`, data);
+export const loadGraphFromFile = (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return axios.post(`${API_URL}/load_graph_from_file`, formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
 };
+
 
 export const loadGraphFromString = (data) => {
     return axios.post(`${API_URL}/load_graph_from_string`, data);

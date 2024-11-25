@@ -7,6 +7,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import base64
 from io import BytesIO
+import pandas as pd
 
 app = Flask(__name__)
 CORS(app) 
@@ -73,18 +74,36 @@ def get_graph_image():
 
 @app.route("/load_graph_from_file", methods=["POST"])
 def load_graph_from_file():
-    data = request.json
-    vertices = data.get("vertices", [])
-    arestas = data.get("arestas", [])
-    for vertice in vertices:
-        grafo.add_node(vertice)
-    for aresta in arestas:
-        origem, destino, peso = aresta
-        if is_weighted:
-            grafo.add_edge(origem, destino, weight=peso)
-        else:
-            grafo.add_edge(origem, destino)
-    return jsonify({"message": "Grafo carregado do arquivo com sucesso!"})
+    # Verifica se um arquivo foi enviado
+    if 'file' not in request.files:
+        return jsonify({"error": "Nenhum arquivo enviado."}), 400
+
+    # Lê o arquivo CSV enviado
+    file = request.files['file']
+    try:
+        data = pd.read_csv(file)
+    except Exception as e:
+        return jsonify({"error": f"Erro ao processar o arquivo CSV: {str(e)}"}), 400
+
+    # Garante que as colunas necessárias estão presentes
+    if not {'Source', 'Target', 'Weigth'}.issubset(data.columns):
+        return jsonify({"error": "Arquivo CSV deve conter as colunas: Source, Target, Weigth"}), 400
+
+    # Adiciona vértices e arestas ao grafo
+    for _, row in data.iterrows():
+        origem, destino, peso = row['Source'], row['Target'], row['Weigth']
+        
+        # Adiciona o nó apenas se ainda não existir
+        if origem not in grafo:
+            grafo.add_node(origem)
+        if destino not in grafo:
+            grafo.add_node(destino)
+        
+        # Adiciona a aresta com peso
+        grafo.add_edge(origem, destino, weight=peso)
+
+    return jsonify({"message": "Grafo carregado do arquivo CSV com sucesso!"})
+
 
 @app.route("/load_graph_from_string", methods=["POST"])
 def load_graph_from_string():

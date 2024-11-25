@@ -101,17 +101,20 @@ function GraphControls({ setGraphImage }) {
 
     const handleLoadGraphFromFile = async () => {
         if (!file) {
-            alert("Por favor, selecione um arquivo JSON.");
+            alert("Por favor, selecione um arquivo CSV.");
             return;
         }
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-            const content = JSON.parse(e.target.result);
-            await loadGraphFromFile(content);
-            fetchGraphImage();
-        };
-        reader.readAsText(file);
+    
+        try {
+            const response = await loadGraphFromFile(file); // Envia o arquivo diretamente
+            alert(response.data.message);
+            fetchGraphImage(); // Atualiza o grafo, se necessário
+        } catch (error) {
+            console.error("Erro:", error);
+            alert(error.response?.data?.error || "Erro ao carregar o grafo.");
+        }
     };
+    
 
     const handleLoadGraphFromString = async () => {
         try {
