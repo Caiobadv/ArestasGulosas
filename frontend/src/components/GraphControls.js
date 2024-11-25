@@ -77,6 +77,7 @@ function GraphControls({ setGraphImage }) {
             alert("Por favor, insira o nome de um vértice.");
             return;
         }
+        console.log(typeof(degreeVertex));
         const response = await getVertexDegree(degreeVertex);
         setVertexDegree(response.data);
     };
@@ -95,8 +96,12 @@ function GraphControls({ setGraphImage }) {
             alert("Por favor, insira os nomes dos vértices de origem e destino.");
             return;
         }
-        const response = await getShortestPath(origem, destino);
-        setShortestPath(response.data);
+        try {
+            const response = await getShortestPath(origem, destino);
+            setShortestPath(response.data);
+        } catch(Error){
+            alert(Error.response.data.message);
+        }
     };
 
     const handleLoadGraphFromFile = async () => {
@@ -106,9 +111,9 @@ function GraphControls({ setGraphImage }) {
         }
     
         try {
-            const response = await loadGraphFromFile(file); // Envia o arquivo diretamente
+            const response = await loadGraphFromFile(file);
             alert(response.data.message);
-            fetchGraphImage(); // Atualiza o grafo, se necessário
+            fetchGraphImage();
         } catch (error) {
             console.error("Erro:", error);
             alert(error.response?.data?.error || "Erro ao carregar o grafo.");

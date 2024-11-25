@@ -47,7 +47,7 @@ def add_edge():
 
 @app.route("/get_graph_image", methods=["GET"])
 def get_graph_image():
-    plt.figure(figsize=(6, 4))
+    plt.figure(figsize=(16, 12))
     pos = nx.spring_layout(grafo)
     labels = nx.get_edge_attributes(grafo, 'weight') if is_weighted else None
     
@@ -74,35 +74,34 @@ def get_graph_image():
 
 @app.route("/load_graph_from_file", methods=["POST"])
 def load_graph_from_file():
-    # Verifica se um arquivo foi enviado
     if 'file' not in request.files:
         return jsonify({"error": "Nenhum arquivo enviado."}), 400
 
-    # Lê o arquivo CSV enviado
     file = request.files['file']
     try:
         data = pd.read_csv(file)
     except Exception as e:
         return jsonify({"error": f"Erro ao processar o arquivo CSV: {str(e)}"}), 400
 
-    # Garante que as colunas necessárias estão presentes
     if not {'Source', 'Target', 'Weigth'}.issubset(data.columns):
         return jsonify({"error": "Arquivo CSV deve conter as colunas: Source, Target, Weigth"}), 400
 
-    # Adiciona vértices e arestas ao grafo
     for _, row in data.iterrows():
-        origem, destino, peso = row['Source'], row['Target'], row['Weigth']
+        origem = str(row['Source'])
+        destino = str(row['Target'])
+        peso = int(row['Weigth'])
         
-        # Adiciona o nó apenas se ainda não existir
         if origem not in grafo:
             grafo.add_node(origem)
         if destino not in grafo:
             grafo.add_node(destino)
         
-        # Adiciona a aresta com peso
         grafo.add_edge(origem, destino, weight=peso)
 
+    print(get_graph())
+
     return jsonify({"message": "Grafo carregado do arquivo CSV com sucesso!"})
+
 
 
 @app.route("/load_graph_from_string", methods=["POST"])
@@ -169,6 +168,11 @@ def shortest_path():
     except nx.NetworkXNoPath:
         return jsonify({"message": f"Não existe caminho entre {origem} e {destino}."}), 404
     
+@app.route("/get_graph", methods=["GET"])
+def get_graph():
+    nodes = list(grafo.nodes)
+    edges = list(grafo.edges(data=True))
+    return jsonify({"nodes": nodes, "edges": edges})
 
 
 if __name__ == "__main__":
