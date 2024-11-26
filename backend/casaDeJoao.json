@@ -1,0 +1,25 @@
+{
+    "vertices": [
+        "CasaDoJoao",
+        "Quitanda",
+        "Pracinha",
+        "Cancela",
+        "Escola",
+        "Armazem",
+        "BancaDeJornal"
+    ],
+    "arestas": [
+        ["CasaDoJoao", "Quitanda", 10],
+        ["CasaDoJoao", "Pracinha", 6],
+        ["CasaDoJoao", "Cancela", 2],
+        ["CasaDoJoao", "Armazem", 5],
+        ["Quitanda", "Pracinha", 3],
+        ["Quitanda", "Cancela", 4],
+        ["Quitanda", "BancaDeJornal", 6],
+        ["Pracinha", "BancaDeJornal", 11],
+        ["Pracinha", "Cancela", 6],
+        ["Cancela", "Escola", 8],
+        ["Armazem", "BancaDeJornal", 13],
+        ["Escola", "BancaDeJornal", 3]
+    ]
+}
