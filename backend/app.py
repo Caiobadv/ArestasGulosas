@@ -82,13 +82,13 @@ def load_graph_from_file():
     except Exception as e:
         return jsonify({"error": f"Erro ao processar o arquivo CSV: {str(e)}"}), 400
 
-    if not {'Source', 'Target', 'Weigth'}.issubset(data.columns):
-        return jsonify({"error": "Arquivo CSV deve conter as colunas: Source, Target, Weigth"}), 400
+    if not {'Source', 'Target', 'Weight'}.issubset(data.columns):
+        return jsonify({"error": "Arquivo CSV deve conter as colunas: Source, Target, Weight"}), 400
 
     for _, row in data.iterrows():
         origem = str(row['Source'])
         destino = str(row['Target'])
-        peso = int(row['Weigth'])
+        peso = int(row['Weight'])
         
         if origem not in grafo:
             grafo.add_node(origem)

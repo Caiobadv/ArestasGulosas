@@ -28,7 +28,6 @@ export const loadGraphFromFile = (file) => {
     });
 };
 
-
 export const loadGraphFromString = (data) => {
     return axios.post(`${API_URL}/load_graph_from_string`, data);
 };
