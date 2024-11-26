@@ -52,6 +52,6 @@ export const getShortestPath = (origem, destino) => {
     return axios.post(`${API_URL}/shortest_path`, { origem, destino });
 };
 
-export const getIsEurelian = () => {
+export const getIsEulerian = () => {
     return axios.get(`${API_URL}/is_eulerian`);
 };

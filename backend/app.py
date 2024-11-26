@@ -154,7 +154,10 @@ def vertex_degree():
 def are_adjacent():
     vertice1 = request.json.get("vertice1")
     vertice2 = request.json.get("vertice2")
-    adjacente = grafo.has_edge(vertice1, vertice2)
+    if grafo.has_edge(vertice1, vertice2) or grafo.has_edge(vertice2, vertice1):
+        adjacente = True
+    else:
+        adjacente = False
     return jsonify({"adjacente": adjacente})
 
 @app.route("/shortest_path", methods=["POST"])

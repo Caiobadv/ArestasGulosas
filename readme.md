@@ -1,4 +1,4 @@
-# Projeto - Teoria dos Grafo
+# Projeto - Teoria dos Grafos
 
 Este sistema foi desenvolvido visando facilitar a criação, manipulação e análise de grafos, com foco na aplicação de conceitos teóricos e na resolução de desafios práticos.
 

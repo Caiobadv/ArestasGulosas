@@ -11,7 +11,7 @@ import {
     getShortestPath,
     loadGraphFromFile,
     loadGraphFromString,
-    getIsEurelian
+    getIsEulerian
 } from "../Api";
 
 function GraphControls({ setGraphImage }) {
@@ -22,7 +22,7 @@ function GraphControls({ setGraphImage }) {
     const [destino, setDestino] = useState("");
     const [peso, setPeso] = useState("");
     const [orderSize, setOrderSize] = useState(null);
-    const [eurelian, setEurelian] = useState(null);
+    const [eulerian, setEulerian] = useState(null);
     const [adjacentVertices, setAdjacentVertices] = useState(null);
     const [vertexDegree, setVertexDegree] = useState(null);
     const [adjacency, setAdjacency] = useState(null);
@@ -65,9 +65,9 @@ function GraphControls({ setGraphImage }) {
         setOrderSize(response.data);
     };
 
-    const fetchIsEurelian = async () => {
-        const response = await getIsEurelian();
-        setEurelian(response.data);
+    const fetchIsEulerian = async () => {
+        const response = await getIsEulerian();
+        setEulerian(response.data);
     }
 
     const fetchAdjacentVertices = async () => {
@@ -166,9 +166,9 @@ function GraphControls({ setGraphImage }) {
             {orderSize && <p>Ordem: {orderSize.ordem}, Tamanho: {orderSize.tamanho}</p>}
 
             <div>
-                <h4>Verificar Eureliano</h4>
-                <button onClick={fetchIsEurelian}>Verificar Eureliano</button>
-                {eurelian && <p>{eurelian.message}</p>}
+                <h4>Verificar Euleriano</h4>
+                <button onClick={fetchIsEulerian}>Verificar Euleriano</button>
+                {eulerian && <p>{eulerian.message}</p>}
             </div>
 
             <div>
